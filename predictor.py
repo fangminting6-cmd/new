@@ -5,6 +5,7 @@ import pandas as pd
 import joblib
 import shap
 import matplotlib.pyplot as plt
+import imbalanced-learn
 
 
 # ========= 1. 加载模型（带错误提示） =========
