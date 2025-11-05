@@ -6,8 +6,6 @@ import joblib
 import shap
 import matplotlib.pyplot as plt
 
-# 让 matplotlib 图在 Streamlit 里用得更干净
-st.set_option('deprecation.showPyplotGlobalUse', False)
 
 # ===================== 1. 加载模型 =====================
 model = joblib.load('final_XGJ_model.pkl')  # 确保路径无误
