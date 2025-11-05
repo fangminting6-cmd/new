@@ -7,8 +7,26 @@ import shap
 import matplotlib.pyplot as plt
 
 
-# ===================== 1. 加载模型 =====================
-model = joblib.load('final_XGJ_model.pkl')  # 确保路径无误
+# ========= 1. 加载模型（带错误提示） =========
+@st.cache_resource
+def load_model():
+    """
+    尝试加载本地的 final_XGJ_model.pkl。
+    如果缺少某个依赖包，会在页面上直接显示真正的 ModuleNotFoundError 信息。
+    """
+    try:
+        model = joblib.load("final_XGJ_model.pkl")
+        return model
+    except ModuleNotFoundError as e:
+        # 这里会显示类似：No module named 'xxx.yyy'
+        st.error(f"加载模型失败，缺少依赖库：{e}")
+        st.stop()
+    except Exception as e:
+        # 其他类型错误（比如文件路径错误）
+        st.error(f"加载模型失败，其他错误：{e}")
+        st.stop()
+
+model = load_model()
 
 # 如果暂时不用，可以先注释掉
 X_test = pd.read_csv('X_test.csv')
