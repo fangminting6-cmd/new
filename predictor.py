@@ -1,36 +1,15 @@
-# 导入库
+# predictor.py
+
+# ========= 0. 导入库 =========
 import streamlit as st
 import numpy as np
 import pandas as pd
 import joblib
 import shap
 import matplotlib.pyplot as plt
-import imbalanced-learn
 
-
-# ========= 1. 加载模型（带错误提示） =========
-@st.cache_resource
-def load_model():
-    """
-    尝试加载本地的 final_XGJ_model.pkl。
-    如果缺少某个依赖包，会在页面上直接显示真正的 ModuleNotFoundError 信息。
-    """
-    try:
-        model = joblib.load("final_XGJ_model.pkl")
-        return model
-    except ModuleNotFoundError as e:
-        # 这里会显示类似：No module named 'xxx.yyy'
-        st.error(f"加载模型失败，缺少依赖库：{e}")
-        st.stop()
-    except Exception as e:
-        # 其他类型错误（比如文件路径错误）
-        st.error(f"加载模型失败，其他错误：{e}")
-        st.stop()
-
-model = load_model()
-
-# 如果暂时不用，可以先注释掉
-X_test = pd.read_csv('X_test.csv')
+# ========= 1. Streamlit 标题 =========
+st.title("ACL Injury Risk Predictor")
 
 # 特征名称（要与训练时一致）
 feature_names = [
@@ -45,10 +24,18 @@ feature_names = [
     "HQ_ratio",  # 腘绳肌/股四头肌
 ]
 
-# ===================== 2. Streamlit UI =====================
-st.title("ACL Injury Risk Predictor")
+# ========= 2. 定义一个“安全加载模型”的函数（懒加载） =========
+@st.cache_resource
+def load_model_safe():
+    """
+    懒加载 final_XGJ_model.pkl。
+    如果缺少某个依赖库，抛出异常，在外面统一捕获并显示。
+    注意：这里不直接 st.error/st.stop，只负责“抛错”。
+    """
+    return joblib.load("final_XGJ_model.pkl")
 
-# 角度可以用 float 会更合理，这里给出一个常用范围示例，你可以根据数据再微调
+
+# ========= 3. UI：输入框 =========
 HFA = st.number_input("髋屈曲 (°):",   min_value=0.0,  max_value=120.0, value=43.0, step=1.0)
 HAA = st.number_input("髋外展 (°):",   min_value=-30.0, max_value=30.0,  value=3.0,  step=1.0)
 KFA = st.number_input("膝屈曲 (°):",   min_value=0.0,  max_value=120.0, value=29.0, step=1.0)
@@ -57,22 +44,29 @@ KAA = st.number_input("膝外翻 (°):",   min_value=-15.0, max_value=30.0,  val
 AFA = st.number_input("踝屈曲 (°):",   min_value=-20.0, max_value=40.0,  value=21.0, step=1.0)
 FPA = st.number_input("足外展 (°):",   min_value=-30.0, max_value=40.0,  value=13.0, step=1.0)
 TFA = st.number_input("躯干前倾 (°):", min_value=0.0,  max_value=90.0,  value=38.0, step=1.0)
-
-# H/Q 比建议用 float 范围
 HQ_ratio = st.number_input("腘绳肌/股四头肌 H/Q:", min_value=0.0, max_value=3.0, value=0.71, step=0.01)
 
-# 组装成模型输入
 feature_values = [HFA, HAA, KFA, ITR, KAA, AFA, FPA, TFA, HQ_ratio]
 features = np.array([feature_values])  # shape = (1, 9)
 
-# ===================== 3. 点击按钮进行预测 =====================
+# ========= 4. 点击按钮：在这里才去加载模型 & 预测 =========
 if st.button("Predict"):
-    # ---------- 3.1 预测 ACL （假设输出单位为 ×BW） ----------
+    # 4.1 先尝试加载模型，如果缺库，用 st.error 显示真正报错信息
+    try:
+        model = load_model_safe()
+    except ModuleNotFoundError as e:
+        # 这里会显示类似: No module named 'imblearn.pipeline'
+        st.error(f"加载模型失败，缺少依赖库：{e}")
+        st.stop()
+    except Exception as e:
+        st.error(f"加载模型失败，其他错误：{e}")
+        st.stop()
+
+    # 4.2 预测 ACL 值（假设为 ×BW）
     acl_bw = float(np.asarray(model.predict(features)).ravel()[0])
     st.write(f"**Predicted ACL load (×BW):** {acl_bw:.2f}")
 
-    # ---------- 3.2 风险分级 ----------
-    # <2.00 低；2.00–2.45 中；≥2.45 高
+    # 4.3 风险分级：<2.00 低；2.00–2.45 中；≥2.45 高
     LOW_TH, HIGH_TH = 2.00, 2.45
 
     if acl_bw >= HIGH_TH:
@@ -101,32 +95,20 @@ if st.button("Predict"):
     st.markdown(f"**Risk level:** {risk_label}")
     st.markdown("**Recommendations:**\n" + advice)
 
-    # ===================== 4. SHAP 单样本解释 =====================
+    # ========= 5. SHAP 单样本解释 =========
     st.subheader("SHAP Force Plot Explanation")
 
-    # 4.1 创建解释器
     explainer_shap = shap.TreeExplainer(model)
-
-    # 4.2 把输入变成 DataFrame，列名与特征对应
     input_df = pd.DataFrame(features, columns=feature_names)
-
-    # 4.3 计算当前这个样本的 SHAP 值（回归：shape = (1, n_features)）
     shap_values = explainer_shap.shap_values(input_df)
 
-    # 4.4 画 force plot（Matplotlib 版本，便于保存/嵌入）
     plt.figure(figsize=(8, 2.5))
     shap.force_plot(
-        explainer_shap.expected_value,  # baseline
-        shap_values[0, :],             # 当前样本的 SHAP 值
-        input_df.iloc[0, :],           # 当前样本的特征
+        explainer_shap.expected_value,
+        shap_values[0, :],
+        input_df.iloc[0, :],
         matplotlib=True,
-        show=False                     # 不要自动 show
+        show=False,
     )
-
-    # 方式一：直接在 Streamlit 里显示
     st.pyplot(plt.gcf())
-
-    # 若你还想保存成文件：
-    plt.savefig("shap_force_plot.png", bbox_inches="tight", dpi=300)
     plt.close()
-    # st.image("shap_force_plot.png", caption="SHAP Force Plot Explanation")
