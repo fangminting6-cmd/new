@@ -83,8 +83,11 @@ with left_col:
 
 # -------- 右侧：组装输入 + 显示预测 + SHAP --------
 with right_col:
-    # 加一个竖向占位，让标题下移一行，基本和 ITR 平行
-    st.markdown("<div style='height:3rem;'></div>", unsafe_allow_html=True)
+    # 往上挪一点：加一个带负 margin-top 的占位 div
+    st.markdown(
+        "<div style='margin-top:-1.2rem;'></div>",
+        unsafe_allow_html=True
+    )
 
     st.subheader("Prediction & Explanation")
 
