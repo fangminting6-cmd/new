@@ -14,7 +14,7 @@ st.markdown("""
     <style>
         /* 控制每个 st.number_input 外层容器的下边距 */
         div.stNumberInput {
-            margin-bottom: 0.9rem;   /* 数值可以再调大一点比如 1.5rem */
+            margin-bottom: 1.0rem;   /* 数值可以再调大一点比如 1.5rem */
         }
     </style>
 """, unsafe_allow_html=True)
