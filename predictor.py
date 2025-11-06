@@ -66,11 +66,11 @@ if st.button("Predict"):
 )
 
     else:
-    risk_label = "Low risk"
-    advice = (
-    "- The current ACL load is relatively low; you may continue with your existing training program.\n"
-    "- Maintain lower-limb strength and neuromuscular control, and pay attention to movement quality under fatigue.\n"
-    "- Reassess periodically to monitor changes in risk."
+        risk_label = "Low risk"
+        advice = (
+     "- 当前 ACL 负荷相对较低，可继续现有训练方案。\n"
+     "- 维持下肢力量与神经肌肉控制，注意疲劳状态下技术动作质量。\n"
+     "- 定期复评以监测风险变化。"
 )
 
 
