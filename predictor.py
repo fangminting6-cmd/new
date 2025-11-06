@@ -9,6 +9,16 @@ import matplotlib.pyplot as plt
 # ===== 0. 页面设置：宽屏 =====
 st.set_page_config(page_title="ACL Injury Risk Predictor", layout="wide")
 
+# 调整所有 number_input 之间的上下间距
+st.markdown("""
+    <style>
+        /* 控制每个 st.number_input 外层容器的下边距 */
+        div.stNumberInput {
+            margin-bottom: 1.2rem;   /* 数值可以再调大一点比如 1.5rem */
+        }
+    </style>
+""", unsafe_allow_html=True)
+
 # ===================== 1. 加载模型 =====================
 model = joblib.load('final_XGJ_model.pkl')  # 确保路径无误
 
