@@ -85,7 +85,7 @@ with left_col:
 with right_col:
     # 往上挪一点：加一个带负 margin-top 的占位 div
     st.markdown(
-        "<div style='margin-top:5rem;'></div>",
+        "<div style='margin-top:-8rem;'></div>",
         unsafe_allow_html=True
     )
 
