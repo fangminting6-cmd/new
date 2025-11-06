@@ -79,7 +79,7 @@ with left_col:
         )
 
     # ⭐ 把按钮放在 H/Q 下面
-    predict_clicked = st.button("Predict")
+    predict_clicked = st.button("Predict", use_container_width=True)
 
 # -------- 右侧：组装输入 + 显示预测 + SHAP --------
 with right_col:
@@ -102,12 +102,11 @@ with right_col:
         if acl_bw >= HIGH_TH:
             risk_label = "High risk"
             advice = (
-                "- Increase knee flexion angle at initial contact (≥30°) to avoid dynamic knee valgus.\n"
-                "- Reduce excessive tibial internal rotation / toe-in; keep the foot progression angle around 10–20°.\n"
-                "- Strengthen the hamstrings and gluteal muscles, and improve H/Q co-activation and hip control.\n"
-                "- Incorporate sport-specific technique and neuromuscular training, and monitor training/competition load.\n"
-                "- If instability or pain is present, consult a sports medicine professional."
+                "- Increase knee flexion at initial contact (≥30°) and avoid excessive tibial internal rotation/toe-in, keeping the foot progression angle around 10–20°.\n"
+                "- Strengthen the hamstrings and gluteal muscles, and use neuromuscular and sport-specific technique training to improve dynamic knee control.\n"
+                "- Monitor training and competition load, and consult a sports medicine professional if knee pain or instability occurs."
             )
+
         else:
             risk_label = "Low risk"
             advice = (
