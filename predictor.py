@@ -29,18 +29,48 @@ feature_names = [
 # ===================== 2. Streamlit UI =====================
 st.title("ACL Injury Risk Predictor")
 
-# 角度可以用 float 会更合理，这里给出一个常用范围示例，你可以根据数据再微调
-HFA = st.number_input("hip flexion angle (HFA):",   min_value=0.0,  max_value=120.0, value=43.0, step=1.0)
-HAA = st.number_input("hip abduction angle (HAA):",   min_value=-30.0, max_value=30.0,  value=3.0,  step=1.0)
-KFA = st.number_input("knee flexion angle (KFA):",   min_value=0.0,  max_value=120.0, value=29.0, step=1.0)
-ITR = st.number_input("internal tibial rotation angle (ITR):", min_value=-30.0, max_value=30.0,  value=8.0,  step=1.0)
-KAA = st.number_input("knee valgus angle (KVA):",   min_value=-15.0, max_value=30.0,  value=10.0, step=1.0)
-AFA = st.number_input("ankle flexion angle (AFA):",   min_value=-20.0, max_value=40.0,  value=21.0, step=1.0)
-FPA = st.number_input("foot progression angle (FPA):",   min_value=-30.0, max_value=40.0,  value=13.0, step=1.0)
-TFA = st.number_input("trunk flexion angle (TFA):", min_value=0.0,  max_value=90.0,  value=38.0, step=1.0)
+# 建两列
+col1, col2 = st.columns(2)
 
-# H/Q 比建议用 float 范围
-HQ_ratio = st.number_input("H/Q:", min_value=0.0, max_value=3.0, value=0.71, step=0.01)
+with col1:
+    HFA = st.number_input(
+        "Hip flexion angle (HFA, °):",
+        min_value=0.0, max_value=120.0, value=43.0, step=1.0
+    )
+    KFA = st.number_input(
+        "Knee flexion angle (KFA, °):",
+        min_value=0.0, max_value=120.0, value=29.0, step=1.0
+    )
+    KAA = st.number_input(
+        "Knee valgus angle (KAA, °):",
+        min_value=-15.0, max_value=30.0, value=10.0, step=1.0
+    )
+    FPA = st.number_input(
+        "Foot progression angle (FPA, °):",
+        min_value=-30.0, max_value=40.0, value=13.0, step=1.0
+    )
+
+with col2:
+    HAA = st.number_input(
+        "Hip abduction angle (HAA, °):",
+        min_value=-30.0, max_value=30.0, value=3.0, step=1.0
+    )
+    ITR = st.number_input(
+        "Internal tibial rotation angle (ITR, °):",
+        min_value=-30.0, max_value=30.0, value=8.0, step=1.0
+    )
+    AFA = st.number_input(
+        "Ankle flexion angle (AFA, °):",
+        min_value=-20.0, max_value=40.0, value=21.0, step=1.0
+    )
+    TFA = st.number_input(
+        "Trunk flexion angle (TFA, °):",
+        min_value=0.0, max_value=90.0, value=38.0, step=1.0
+    )
+    HQ_ratio = st.number_input(
+        "H/Q ratio:",
+        min_value=0.0, max_value=3.0, value=0.71, step=0.01
+    )
 
 # 组装成模型输入
 feature_values = [HFA, HAA, KFA, ITR, KAA, AFA, FPA, TFA, HQ_ratio]
