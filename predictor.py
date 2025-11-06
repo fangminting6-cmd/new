@@ -6,6 +6,9 @@ import joblib
 import shap
 import matplotlib.pyplot as plt
 
+# ===== 0. 页面设置：宽屏 =====
+st.set_page_config(page_title="ACL Injury Risk Predictor", layout="wide")
+
 # ===================== 1. 加载模型 =====================
 model = joblib.load('final_XGJ_model.pkl')  # 确保路径无误
 
@@ -28,7 +31,8 @@ feature_names = [
 # ===================== 2. 布局：左输入 / 右预测 =====================
 st.title("ACL Injury Risk Predictor")
 
-left_col, right_col = st.columns([2, 1])  # 左 2 份宽度，右 1 份
+# 🔴 左右同宽
+left_col, right_col = st.columns(2)
 
 # -------- 左侧：所有 st.number_input --------
 with left_col:
@@ -104,9 +108,9 @@ with right_col:
         else:
             risk_label = "Low risk"
             advice = (
-                "- 当前 ACL 负荷相对较低，可继续现有训练方案。\n"
-                "- 维持下肢力量与神经肌肉控制，注意疲劳状态下技术动作质量。\n"
-                "- 定期复评以监测风险变化。"
+                "- The current ACL load is relatively low; you may continue with your current training program.\n"
+                "- Maintain lower-limb strength and neuromuscular control, and pay attention to movement quality under fatigue.\n"
+                "- Reassess regularly to monitor changes in risk."
             )
 
         st.markdown(f"**Risk level:** {risk_label}")
