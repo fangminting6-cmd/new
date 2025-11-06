@@ -31,7 +31,7 @@ feature_names = [
     "HAA",       # 髋外展 / 内收
     "KFA",       # 膝屈曲
     "ITR",       # 胫骨内旋
-    "KVA",       # 膝外翻 / 内翻
+    "KAA",       # 膝外翻 / 内翻
     "AFA",       # 踝屈曲
     "FPA",       # 足外展
     "TFA",       # 躯干前倾
@@ -102,7 +102,7 @@ with right_col:
     st.subheader("Prediction & Explanation")
 
     # 组装成模型输入
-    feature_values = [HFA, HAA, KFA, ITR, KVA, AFA, FPA, TFA, HQ_ratio]
+    feature_values = [HFA, HAA, KFA, ITR, KAA, AFA, FPA, TFA, HQ_ratio]
     features = np.array([feature_values])  # shape = (1, 9)
 
     # ===================== 3. 点击按钮进行预测 =====================
