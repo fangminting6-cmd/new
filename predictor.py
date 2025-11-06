@@ -40,37 +40,37 @@ with left_col:
 
     with col1:
         HFA = st.number_input(
-            "Hip flexion angle (HFA, °):",
+            "Hip flexion angle (HFA):",
             min_value=0.0, max_value=120.0, value=32.2, step=1.0
         )
         KFA = st.number_input(
-            "Knee flexion angle (KFA, °):",
+            "Knee flexion angle (KFA):",
             min_value=0.0, max_value=120.0, value=11.0, step=1.0
         )
         KAA = st.number_input(
-            "Knee valgus angle (KAA, °):",
+            "Knee valgus angle (KAA):",
             min_value=-15.0, max_value=30.0, value=11.29, step=1.0
         )
         FPA = st.number_input(
-            "Foot progression angle (FPA, °):",
+            "Foot progression angle (FPA):",
             min_value=-30.0, max_value=40.0, value=12.0, step=1.0
         )
         HAA = st.number_input(
-            "Hip abduction angle (HAA, °):",
+            "Hip abduction angle (HAA):",
             min_value=-30.0, max_value=30.0, value=11.0, step=1.0
         )
 
     with col2:
         ITR = st.number_input(
-            "Internal tibial rotation angle (ITR, °):",
+            "Internal tibial rotation angle (ITR):",
             min_value=-30.0, max_value=30.0, value=6.0, step=1.0
         )
         AFA = st.number_input(
-            "Ankle flexion angle (AFA, °):",
+            "Ankle flexion angle (AFA):",
             min_value=-20.0, max_value=40.0, value=20.0, step=1.0
         )
         TFA = st.number_input(
-            "Trunk flexion angle (TFA, °):",
+            "Trunk flexion angle (TFA):",
             min_value=0.0, max_value=90.0, value=24.0, step=1.0
         )
         HQ_ratio = st.number_input(
@@ -119,8 +119,7 @@ with right_col:
         st.markdown("**Recommendations:**\n" + advice)
 
         # ===================== 4. SHAP 单样本解释 =====================
-        st.markdown("---")
-        st.subheader("SHAP Force Plot")
+        st.markdown("### SHAP Force Plot")
 
         # 4.1 创建解释器
         explainer_shap = shap.TreeExplainer(model)
@@ -138,14 +137,9 @@ with right_col:
             shap_values[0, :],              # 当前样本的 SHAP 值
             input_df.iloc[0, :],            # 当前样本的特征
             matplotlib=True,
-            show=False                      # 不要自动 show
+            show=False
         )
 
-        # 在 Streamlit 里显示
         st.pyplot(plt.gcf())
-
-        # 若你还想保存成文件：
         plt.savefig("shap_force_plot.png", bbox_inches="tight", dpi=300)
         plt.close()
-        # 也可以再用 st.image 显示保存后的文件：
-        # st.image("shap_force_plot.png", caption="SHAP Force Plot Explanation")
