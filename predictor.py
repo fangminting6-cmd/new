@@ -82,7 +82,7 @@ with left_col:
     predict_clicked = st.button("Predict", use_container_width=True)
 
 # -------- 右侧：组装输入 + 显示预测 + SHAP --------
-with right_col: st.subheader("Prediction & Explanation")
+    with right_col: st.subheader("Prediction & Explanation")
 
     # 组装成模型输入
     feature_values = [HFA, HAA, KFA, ITR, KAA, AFA, FPA, TFA, HQ_ratio]
