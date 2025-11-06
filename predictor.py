@@ -31,54 +31,57 @@ feature_names = [
 # ===================== 2. 布局：左输入 / 右预测 =====================
 st.title("ACL Injury Risk Predictor")
 
-# 🔴 左右同宽
+# 左右同宽
 left_col, right_col = st.columns(2)
 
-# -------- 左侧：所有 st.number_input --------
+# -------- 左侧：所有 st.number_input + Predict 按钮 --------
 with left_col:
     col1, col2 = st.columns(2)
 
     with col1:
         HFA = st.number_input(
             "Hip flexion angle (HFA, °):",
-            min_value=0.0, max_value=120.0, value=43.0, step=1.0
+            min_value=0.0, max_value=120.0, value=32.2, step=1.0
         )
         KFA = st.number_input(
             "Knee flexion angle (KFA, °):",
-            min_value=0.0, max_value=120.0, value=29.0, step=1.0
+            min_value=0.0, max_value=120.0, value=11.0, step=1.0
         )
         KAA = st.number_input(
             "Knee valgus angle (KAA, °):",
-            min_value=-15.0, max_value=30.0, value=10.0, step=1.0
+            min_value=-15.0, max_value=30.0, value=11.29, step=1.0
         )
         FPA = st.number_input(
             "Foot progression angle (FPA, °):",
-            min_value=-30.0, max_value=40.0, value=13.0, step=1.0
+            min_value=-30.0, max_value=40.0, value=12.0, step=1.0
         )
         HAA = st.number_input(
             "Hip abduction angle (HAA, °):",
-            min_value=-30.0, max_value=30.0, value=3.0, step=1.0
+            min_value=-30.0, max_value=30.0, value=11.0, step=1.0
         )
 
     with col2:
         ITR = st.number_input(
             "Internal tibial rotation angle (ITR, °):",
-            min_value=-30.0, max_value=30.0, value=8.0, step=1.0
+            min_value=-30.0, max_value=30.0, value=6.0, step=1.0
         )
         AFA = st.number_input(
             "Ankle flexion angle (AFA, °):",
-            min_value=-20.0, max_value=40.0, value=21.0, step=1.0
+            min_value=-20.0, max_value=40.0, value=20.0, step=1.0
         )
         TFA = st.number_input(
             "Trunk flexion angle (TFA, °):",
-            min_value=0.0, max_value=90.0, value=38.0, step=1.0
+            min_value=0.0, max_value=90.0, value=24.0, step=1.0
         )
         HQ_ratio = st.number_input(
             "H/Q ratio:",
-            min_value=0.0, max_value=3.0, value=0.71, step=0.01
+            min_value=0.0, max_value=3.0, value=0.58, step=0.01
         )
 
-# -------- 右侧：组装输入 + 预测 + SHAP --------
+    # ⭐ 把按钮放在 H/Q 下面
+    predict_clicked = st.button("Predict")
+
+# -------- 右侧：组装输入 + 显示预测 + SHAP --------
 with right_col:
     st.subheader("Prediction & Explanation")
 
@@ -87,7 +90,7 @@ with right_col:
     features = np.array([feature_values])  # shape = (1, 9)
 
     # ===================== 3. 点击按钮进行预测 =====================
-    if st.button("Predict"):
+    if predict_clicked:
         # ---------- 3.1 预测 ACL （假设输出单位为 ×BW） ----------
         acl_bw = float(np.asarray(model.predict(features)).ravel()[0])
         st.write(f"**Predicted ACL load (×BW):** {acl_bw:.2f}")
