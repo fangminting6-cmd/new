@@ -136,9 +136,9 @@ with right_col:
         else:
             risk_label = "Low risk"
            advice = (
-    "- Maintain current lunge technique with smooth deceleration, good trunk and hip control and avoid abrupt changes in footwork without technical supervision.\n"
-    "- Continue lower-limb strength and neuromuscular training (hamstrings, gluteals, quadriceps and core), including single-leg balance and landing drills with proper alignment.\n"
-    "- Monitor overall training and competition load, prioritize recovery and fatigue management, and seek early assessment if any new knee pain, swelling or instability appears."
+               "- Maintain current lunge technique with smooth deceleration, good trunk and hip control and avoid abrupt changes in footwork without technical supervision.\n"
+               "- Continue lower-limb strength and neuromuscular training (hamstrings, gluteals, quadriceps and core), including single-leg balance and landing drills with proper alignment.\n"
+               "- Monitor overall training and competition load, prioritize recovery and fatigue management, and seek early assessment if any new knee pain, swelling or instability appears."
 )
 
 
