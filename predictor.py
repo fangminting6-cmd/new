@@ -128,18 +128,19 @@ with right_col:
         if acl_bw >= HIGH_TH:
             risk_label = "High risk"
             advice = (
-                "- Increase knee flexion at initial contact (≥30°) and avoid excessive tibial internal rotation/toe-in, keeping the foot progression angle around 10–20°.\n"
+                "- Increase knee flexion at initial contact and avoid excessive tibial internal rotation or toe-in, keeping the foot generally aligned with the direction of movement.\n"
                 "- Strengthen the hamstrings and gluteal muscles, and use neuromuscular and sport-specific technique training to improve dynamic knee control.\n"
                 "- Monitor training and competition load, and consult a sports medicine professional if knee pain or instability occurs."
-            )
+)
 
         else:
             risk_label = "Low risk"
-            advice = (
-    "- Increase knee flexion at initial contact and avoid excessive tibial internal rotation or toe-in, keeping the foot generally aligned with the direction of movement.\n"
-    "- Strengthen the hamstrings and gluteal muscles, and use neuromuscular and sport-specific technique training to improve dynamic knee control.\n"
-    "- Monitor training and competition load, and consult a sports medicine professional if knee pain or instability occurs."
+           advice = (
+    "- Maintain current lunge technique with smooth deceleration, good trunk and hip control and avoid abrupt changes in footwork without technical supervision.\n"
+    "- Continue lower-limb strength and neuromuscular training (hamstrings, gluteals, quadriceps and core), including single-leg balance and landing drills with proper alignment.\n"
+    "- Monitor overall training and competition load, prioritize recovery and fatigue management, and seek early assessment if any new knee pain, swelling or instability appears."
 )
+
 
 
         st.markdown(f"**Risk level:** {risk_label}")
