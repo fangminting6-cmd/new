@@ -4,7 +4,12 @@ import numpy as np
 import pandas as pd
 import joblib
 import shap
+import matplotlib
 import matplotlib.pyplot as plt
+
+matplotlib.rcParams['font.family'] = 'serif'
+matplotlib.rcParams['font.serif'] = ['Times New Roman']
+matplotlib.rcParams['axes.unicode_minus'] = False
 
 # ===== 0. 页面设置：宽屏 =====
 st.set_page_config(page_title="ACL Injury Risk Predictor", layout="wide")
