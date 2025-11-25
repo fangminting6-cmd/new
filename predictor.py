@@ -12,6 +12,11 @@ st.set_page_config(page_title="ACL Injury Risk Predictor", layout="wide")
 # 调整所有 number_input 之间的上下间距
 st.markdown("""
     <style>
+        /* 整个页面使用 Times New Roman 字体 */
+        html, body, [data-testid="stAppViewContainer"], [data-testid="stMarkdown"] {
+            font-family: "Times New Roman", "Times New Roman", serif;
+        }
+
         /* 控制每个 st.number_input 外层容器的下边距 */
         div.stNumberInput {
             margin-bottom: 1.0rem;   /* 数值可以再调大一点比如 1.5rem */
@@ -126,10 +131,11 @@ with right_col:
         else:
             risk_label = "Low risk"
             advice = (
-                "- The current ACL load is relatively low; you may continue with your current training program.\n"
-                "- Maintain lower-limb strength and neuromuscular control, and pay attention to movement quality under fatigue.\n"
-                "- Reassess regularly to monitor changes in risk."
-            )
+    "- Increase knee flexion at initial contact and avoid excessive tibial internal rotation or toe-in, keeping the foot generally aligned with the direction of movement.\n"
+    "- Strengthen the hamstrings and gluteal muscles, and use neuromuscular and sport-specific technique training to improve dynamic knee control.\n"
+    "- Monitor training and competition load, and consult a sports medicine professional if knee pain or instability occurs."
+)
+
 
         st.markdown(f"**Risk level:** {risk_label}")
         st.markdown("**Recommendations:**\n" + advice)
