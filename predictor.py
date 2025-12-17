@@ -41,8 +41,8 @@ feature_names = [
     "HAA",       # 髋外展 / 内收
     "KFA",       # 膝屈曲
     "ITR",       # 胫骨内旋
-    "KAA",       # 膝外翻 / 内翻
-    "AFA",       # 踝屈曲
+    "KVA",       # 膝外翻 / 内翻
+    "ADF",       # 踝屈曲
     "FPA",       # 足外展
     "TFA",       # 躯干前倾
     "HQ_ratio",  # 腘绳肌/股四头肌
@@ -67,7 +67,7 @@ with left_col:
             "Knee flexion angle (KFA):",
             min_value=0.0, max_value=120.0, value=11.0, step=1.0
         )
-        KAA = st.number_input(
+        KVA = st.number_input(
             "Knee valgus angle (KVA):",
             min_value=-15.0, max_value=30.0, value=11.29, step=1.0
         )
@@ -85,7 +85,7 @@ with left_col:
             "Internal tibial rotation angle (ITR):",
             min_value=-30.0, max_value=30.0, value=6.0, step=1.0
         )
-        AFA = st.number_input(
+        ADF = st.number_input(
             "Ankle dorsiflexion angle (ADF):",
             min_value=-20.0, max_value=40.0, value=20.0, step=1.0
         )
@@ -112,7 +112,7 @@ with right_col:
     st.subheader("Prediction & Explanation")
 
     # 组装成模型输入
-    feature_values = [HFA, HAA, KFA, ITR, KAA, AFA, FPA, TFA, HQ_ratio]
+    feature_values = [HFA, HAA, KFA, ITR, KVA, ADF, FPA, TFA, HQ_ratio]
     features = np.array([feature_values])  # shape = (1, 9)
 
     # ===================== 3. 点击按钮进行预测 =====================
