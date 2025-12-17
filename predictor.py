@@ -86,7 +86,7 @@ with left_col:
             min_value=-30.0, max_value=30.0, value=6.0, step=1.0
         )
         AFA = st.number_input(
-            "Ankle flexion angle (AFA):",
+            "Ankle dorsiflexion angle (ADF):",
             min_value=-20.0, max_value=40.0, value=20.0, step=1.0
         )
         TFA = st.number_input(
