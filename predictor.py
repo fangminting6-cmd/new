@@ -1,6 +1,6 @@
 # =====================================================
-#  ACL Injury Risk Predictor — Clinical Excellence UI
-#  High-Impact Journal Style (White/Clean)
+#  ACL Injury Risk Predictor — Precision Image Match
+#  High-Impact Journal Style (Clean White)
 # =====================================================
 import streamlit as st
 import numpy as np
@@ -10,187 +10,134 @@ import shap
 import matplotlib.pyplot as plt
 import matplotlib
 
-# 设置全局字体以符合科研出版物要求
+# 设置全局字体
 matplotlib.rcParams['font.family'] = 'sans-serif'
 matplotlib.rcParams['font.sans-serif'] = ['Arial']
 matplotlib.rcParams['axes.unicode_minus'] = False
 
 # ===== 0. 页面配置 =====
 st.set_page_config(
-    page_title="ACL Risk Assessment | Clinical Research",
-    layout="wide",
-    initial_sidebar_state="collapsed"
+    page_title="ACL Stress Predictor",
+    layout="wide",
+    initial_sidebar_state="collapsed"
 )
 
-# ===== 1. 加载模型与数据 =====
+# ===== 1. 加载模型与原始特征 =====
 @st.cache_resource
 def load_assets():
-    model = joblib.load('final_XGJ_model.pkl')
-    # 模拟或加载解释器
-    explainer = shap.TreeExplainer(model)
-    return model, explainer
+    # 加载模型
+    model = joblib.load('final_XGJ_model.pkl')
+    # 加载 SHAP 解释器
+    explainer = shap.TreeExplainer(model)
+    # 严格保持你原来的特征名称
+    features = ["HFA", "HAA", "KFA", "ITR", "KVA", "ADF", "FPA", "TFA", "H/Q"]
+    return model, explainer, features
 
-model, explainer = load_assets()
-feature_names = ["HFA","HAA","KFA","ITR","KVA","ADF","FPA","TFA","H/Q"]
+model, explainer, feature_names = load_assets()
 
 # ===== 2. 精研 UI 样式 (CSS) =====
 st.markdown("""
 <style>
-    /* 全局背景与字体 */
-    .main {
-        background-color: #F8F9FA !important;
-        color: #2C3E50 !important;
-    }
-    
-    /* 标题样式 - SCI 风格 */
-    .sci-header {
-        font-family: 'Times New Roman', serif;
-        border-bottom: 2px solid #2E5077;
-        padding-bottom: 10px;
-        margin-bottom: 20px;
-        color: #1A3A5F;
-    }
+    .main { background-color: #FFFFFF !important; }
+    
+    /* 匹配图片红色标题 */
+    .img-title {
+        color: #8B0000;
+        font-family: 'Arial Black', sans-serif;
+        font-size: 2.6rem;
+        text-align: center;
+        margin-top: -10px;
+        margin-bottom: 30px;
+    }
+    
+    /* 预测值区域 */
+    .pred-header {
+        color: #008000;
+        font-family: 'Arial', sans-serif;
+        font-size: 1.6rem;
+        font-weight: bold;
+        margin-top: 30px;
+        padding-top: 15px;
+        border-top: 1px solid #EEEEEE;
+    }
+    .pred-value {
+        color: #0000FF;
+        font-family: 'Arial Black', sans-serif;
+        font-size: 3.5rem;
+        margin-top: -5px;
+    }
+    
+    /* 图表标题 */
+    .shap-title { color: #FF8C00; font-size: 1.4rem; font-weight: bold; margin-bottom: 5px; }
+    .force-title { color: #800080; font-size: 1.4rem; font-weight: bold; margin-top: 20px; }
 
-    /* 容器卡片 */
-    .report-card {
-        background-color: #FFFFFF;
-        padding: 25px;
-        border-radius: 10px;
-        border: 1px solid #E1E4E8;
-        box-shadow: 0 4px 6px rgba(0,0,0,0.02);
-        margin-bottom: 20px;
-    }
-
-    /* 重点字体颜色 */
-    .highlight-blue { color: #2E5077; font-weight: 700; }
-    .highlight-red { color: #C0392B; font-weight: 700; }
-    
-    /* 输入框微调 */
-    .stNumberInput label {
-        font-size: 0.9rem !important;
-        color: #566573 !important;
-        font-weight: 600 !important;
-    }
-
-    /* 按钮美化 */
-    div.stButton > button {
-        background-color: #2E5077 !important;
-        color: white !important;
-        border-radius: 5px !important;
-        width: 100%;
-        height: 3em;
-        font-weight: bold;
-        transition: 0.3s;
-    }
-    div.stButton > button:hover {
-        background-color: #1A3A5F !important;
-        box-shadow: 0 4px 12px rgba(46, 80, 119, 0.3);
-    }
+    /* 输入框灰色背景 */
+    div[data-baseweb="input"] {
+        background-color: #F0F2F6 !important;
+    }
 </style>
 """, unsafe_allow_html=True)
 
-# ===== 3. 头部信息 =====
-st.markdown("<h1 class='sci-header'>Anterior Cruciate Ligament (ACL) Risk Intelligence</h1>", unsafe_allow_html=True)
-st.markdown("""
-    <p style='color: #7F8C8D; font-style: italic; font-size: 0.95rem;'>
-        Predictive Analytics Framework based on High-Fidelity Biomechanical Simulation and Gradient Boosting Regressor.
-    </p>
-""", unsafe_allow_html=True)
+# ===== 3. 页面标题 =====
+st.markdown("<h1 class='img-title'>Predicting Peak ACL Stress in Cutting Movements</h1>", unsafe_allow_html=True)
 
-# ===== 4. 主页面布局 =====
-col_input, col_result = st.columns([1, 1.8], gap="large")
+# ===== 4. 主布局 =====
+col_left, col_right = st.columns([1, 1.2], gap="large")
 
-# -------- 左侧：参数录入 --------
-with col_input:
-    st.markdown("### 🧬 <span class='highlight-blue'>Clinical Parameters</span>", unsafe_allow_html=True)
-    with st.container():
-        st.markdown("<div class='report-card'>", unsafe_allow_html=True)
-        c1, c2 = st.columns(2)
-        with c1:
-            hfa = st.number_input("Hip Flexion (HFA) °", 0.0, 120.0, 32.2)
-            kfa = st.number_input("Knee Flexion (KFA) °", 0.0, 120.0, 11.0)
-            kva = st.number_input("Knee Valgus (KVA) °", -15.0, 30.0, 11.2)
-            fpa = st.number_input("Foot Progression (FPA) °", -30.0, 40.0, 12.0)
-        with c2:
-            haa = st.number_input("Hip Abduction (HAA) °", -30.0, 30.0, 11.0)
-            itr = st.number_input("Internal Tibial Rot. (ITR) °", -30.0, 30.0, 6.0)
-            adf = st.number_input("Ankle Dorsiflexion (ADF) °", -20.0, 40.0, 20.0)
-            hq = st.number_input("H/Q Ratio", 0.0, 3.0, 0.58)
-        
-        tfa = st.number_input("Trunk Flexion (TFA) °", 0.0, 90.0, 24.0)
-        
-        run_sim = st.button("EXECUTE ANALYSIS")
-        st.markdown("</div>", unsafe_allow_html=True)
+# -------- 左侧：参数输入与预测结果 --------
+with col_left:
+    # 按照图片样式的双列输入组件
+    c1, c2 = st.columns(2)
+    with c1:
+        hfa = st.number_input("Hip Flexion Angle(HFA)", value=21.20, format="%.2f")
+        kfa = st.number_input("Knee Flexion Angle(KFA)", value=30.10, format="%.2f")
+        haa = st.number_input("Hip Adduction Angle(HAA)", value=21.32, format="%.2f")
+        kva = st.number_input("Knee Valgus Angle(KVA)", value=0.22, format="%.2f")
+        adf = st.number_input("Ankle Dorsiflexion (ADF)", value=20.00, format="%.2f")
+    with c2:
+        itr = st.number_input("Internal Tibial Rot. (ITR)", value=6.00, format="%.2f")
+        fpa = st.number_input("Foot Progression (FPA)", value=12.00, format="%.2f")
+        tfa = st.number_input("Trunk Flexion (TFA)", value=24.00, format="%.2f")
+        hq = st.number_input("Hamstring/Quadriceps(H/Q)", value=0.31, format="%.2f")
 
-# -------- 右侧：分析结果 --------
-with col_result:
-    if run_sim:
-        # 数据准备
-        input_data = np.array([[hfa, haa, kfa, itr, kva, adf, fpa, tfa, hq]])
-        input_df = pd.DataFrame(input_data, columns=feature_names)
-        
-        # 预测
-        prediction = float(model.predict(input_df)[0])
-        threshold = 2.45
-        is_high_risk = prediction >= threshold
-        status_color = "#C0392B" if is_high_risk else "#27AE60"
-        status_text = "HIGH RISK" if is_high_risk else "LOW RISK"
+    # 构建输入 DataFrame 并确保特征顺序正确
+    input_values = {
+        "HFA": hfa, "HAA": haa, "KFA": kfa, "ITR": itr, 
+        "KVA": kva, "ADF": adf, "FPA": fpa, "TFA": tfa, "H/Q": hq
+    }
+    input_df = pd.DataFrame([input_values])[feature_names]
+    
+    # 核心修复：使用 .values 数组进行预测，避开列名不匹配的报错
+    prediction = float(model.predict(input_df.values)[0])
 
-        # 1. 核心结果显示
-        st.markdown(f"""
-            <div class='report-card' style='border-left: 5px solid {status_color};'>
-                <h4 style='margin-top:0;'>Diagnostic Summary</h4>
-                <p style='margin-bottom:5px;'>Predicted ACL Load: <span style='font-size: 24px; color:{status_color}; font-weight:bold;'>{prediction:.2f} × BW</span></p>
-                <p>Risk Classification: <span style='color:{status_color}; font-weight:bold;'>{status_text}</span> 
-                <small>(Threshold: {threshold} × BW)</small></p>
-            </div>
-        """, unsafe_allow_html=True)
+    # 显示结果
+    st.markdown("<div class='pred-header'>Predicted Value</div>", unsafe_allow_html=True)
+    st.markdown(f"<div class='pred-value'>{prediction:.3f}</div>", unsafe_allow_html=True)
 
-        # 2. 解释性分析 (SHAP)
-        st.markdown("### 📊 <span class='highlight-blue'>Explainable AI (XAI) Analytics</span>", unsafe_allow_html=True)
-        
-        shap_values = explainer(input_df)
+# -------- 右侧：SHAP 分析图表 --------
+with col_right:
+    shap_values = explainer(input_df)
+    
+    # 1. Waterfall Plot
+    st.markdown("<div class='shap-title'>Waterfall Plot</div>", unsafe_allow_html=True)
+    fig_wf = plt.figure(figsize=(8, 5))
+    shap.plots.waterfall(shap_values[0], show=False)
+    st.pyplot(plt.gcf())
+    plt.close()
 
-        tab1, tab2 = st.tabs(["Waterfall Explanation", "Force Visualization"])
+    # 2. Force Plot
+    st.markdown("<div class='force-title'>Force Plot</div>", unsafe_allow_html=True)
+    shap.force_plot(
+        explainer.expected_value, 
+        shap_values.values[0], 
+        input_df.iloc[0], 
+        matplotlib=True, 
+        show=False
+    )
+    plt.gcf().set_size_inches(10, 3)
+    plt.tight_layout()
+    st.pyplot(plt.gcf())
+    plt.close()
 
-        with tab1:
-            # 瀑布图：SCI 风格
-            fig_wf, ax_wf = plt.subplots(figsize=(8, 4))
-            shap.plots.waterfall(shap_values[0], show=False)
-            plt.gcf().set_size_inches(8, 4)
-            st.pyplot(plt.gcf())
-            plt.close()
-            st.caption("Waterfall plot: Shows the contribution of each feature to the deviation from the mean prediction.")
-
-        with tab2:
-            # 力图：Streamlit 支持 HTML 渲染
-            # 使用 matplotlib 版本的 force plot 确保在页面稳定显示
-            shap.force_plot(
-                explainer.expected_value, 
-                shap_values.values[0], 
-                input_df.iloc[0], 
-                matplotlib=True, 
-                show=False,
-                text_rotation=0
-            )
-            plt.gcf().set_size_inches(10, 3)
-            st.pyplot(plt.gcf())
-            plt.close()
-            st.caption("Force plot: Visualizes the 'push' of each feature on the final prediction score.")
-
-    else:
-        # 默认占位
-        st.markdown("""
-            <div style='text-align: center; padding: 100px 20px; color: #BDC3C7;'>
-                <h2 style='font-weight: 300;'>Awaiting Input...</h2>
-                <p>Configure kinematic parameters on the left to generate clinical report.</p>
-            </div>
-        """, unsafe_allow_html=True)
-
-# ===== 5. 底部页脚 =====
-st.markdown("---")
-footer_col1, footer_col2 = st.columns(2)
-with footer_col1:
-    st.markdown("<small>Institutional Use Only | Model: XGB-v1.4-Clinical</small>", unsafe_allow_html=True)
-with footer_col2:
-    st.markdown("<div style='text-align:right;'><small>© 2024 Biomechanics Research Lab</small></div>", unsafe_allow_html=True)帮我按照图的样式改代码
+# ===== 5. 页脚 =====
+st.markdown("<br><hr><center><small>Clinical Research Tool | v1.5 | 2026</small></center>", unsafe_allow_html=True)
