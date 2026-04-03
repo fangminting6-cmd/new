@@ -31,7 +31,7 @@ def load_assets():
     return model, explainer
 
 model, explainer = load_assets()
-feature_names = ["HFA","HAA","KFA","ITR","KVA","ADF","FPA","TFA","HQ_ratio"]
+feature_names = ["HFA","HAA","KFA","ITR","KVA","ADF","FPA","TFA","H/Q"]
 
 # ===== 2. 精研 UI 样式 (CSS) =====
 st.markdown("""
