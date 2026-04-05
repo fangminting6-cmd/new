@@ -75,7 +75,7 @@ st.markdown("""
 </style>
 """, unsafe_allow_html=True)
 
-st.markdown("<h1 class='sci-title'>ACL Injury Risk Assessment</h1>", unsafe_allow_html=True)
+st.markdown("<h1 class='sci-title'>Predicting ACL Loading in Lunge Movements</h1>", unsafe_allow_html=True)
 st.markdown("<p class='sci-subtitle'>Precision Biomechanical Modeling for Clinical Decision Support</p>", unsafe_allow_html=True)
 
 if model:
