@@ -75,7 +75,7 @@ st.markdown("""
 </style>
 """, unsafe_allow_html=True)
 
-st.markdown("<h1 class='sci-title'>Predicting ACL Loading in Lunge Movements</h1>", unsafe_allow_html=True)
+st.markdown("<h1 class='sci-title'>Predicting ACL Loading in wide Lunge Movements</h1>", unsafe_allow_html=True)
 st.markdown("<p class='sci-subtitle'>Precision Biomechanical Modeling for Clinical Decision Support</p>", unsafe_allow_html=True)
 
 if model:
@@ -101,7 +101,7 @@ if model:
 
         # 修改后的结果卡片布局
         status_color = '#C0392B' if prediction > 0.6 else '#27AE60'
-        status_label = 'HIGH RISK' if prediction > 0.6 else 'NORMAL'
+        status_label = 'HIGH LOAD' if prediction > 0.6 else 'NORMAL'
         
         st.markdown(f"""
             <div class="result-card">
