@@ -114,7 +114,7 @@ def get_ensemble_prediction(input_arr):
         return None, None, None
 
 st.markdown("<h1 class='sci-title'>Predicting ACL Loading in wide Lunge Movements</h1>", unsafe_allow_html=True)
-st.markdown("<p class='sci-subtitle'>Precision Biomechanical Modeling for Clinical Decision Support</p>", unsafe_allow_html=True)
+st.markdown("<p class='sci-subtitle'>Biomechanical Research Prototype for ACL Loading Estimation</p>", unsafe_allow_html=True)
 
 if model:
     col_left, col_right = st.columns([1, 1], gap="large")
