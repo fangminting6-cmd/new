@@ -25,11 +25,32 @@ def load_assets():
         model = joblib.load('final_XGJ_model.pkl')
         explainer = shap.TreeExplainer(model)
         features = ["HFA", "HAA", "KFA", "ITR", "KVA", "ADF", "FPA", "TFA", "H/Q"]
-        return model, explainer, features
+        # 加载50个重复划分模型用于预测区间（如有）
+        ensemble_models = []
+        import os
+        for seed in range(50):
+            path = f'models/model_seed{seed}.pkl'
+            if os.path.exists(path):
+                ensemble_models.append(joblib.load(path))
+        return model, explainer, features, ensemble_models
     except:
-        return None, None, None
+        return None, None, None, []
 
-model, explainer, feature_names = load_assets()
+model, explainer, feature_names, ensemble_models = load_assets()
+
+# ===== 输入范围（来自描述性统计表的 Min/Max）=====
+# ⚠️ 请将下方数值替换为你描述性统计表中的实际 Min 和 Max
+FEATURE_RANGES = {
+    "HFA":  (3.98,  52.99),   # (Min, Max) 请替换
+    "HAA":  (-20.89,  27.95),
+    "KFA":  (4.70,  46.77),
+    "ITR":  (-19.84, 17.41),
+    "KVA":  (-16.26, 18.38),
+    "ADF":  (-22.85,  36.25),
+    "FPA":  (-4.14, 22.26),
+    "TFA":  (9.46,  45.09),
+    "H/Q":  (0.35,  0.98),
+}
 
 # ===== 2. 优化后的 CSS =====
 st.markdown("""
@@ -75,6 +96,23 @@ st.markdown("""
 </style>
 """, unsafe_allow_html=True)
 
+def check_input_ranges(input_df):
+    """检查输入是否超出训练数据范围，返回超出范围的特征列表"""
+    warnings = []
+    for feature, (lo, hi) in FEATURE_RANGES.items():
+        val = float(input_df[feature].iloc[0])
+        if val < lo or val > hi:
+            warnings.append(f"**{feature}**: input {val:.2f} (valid range: {lo:.2f} – {hi:.2f})")
+    return warnings
+
+def get_ensemble_prediction(input_arr):
+    """使用50个模型集成计算预测区间"""
+    if len(ensemble_models) >= 2:
+        preds = [float(m.predict(input_arr)[0]) for m in ensemble_models]
+        return np.mean(preds), np.percentile(preds, 2.5), np.percentile(preds, 97.5)
+    else:
+        return None, None, None
+
 st.markdown("<h1 class='sci-title'>Predicting ACL Loading in wide Lunge Movements</h1>", unsafe_allow_html=True)
 st.markdown("<p class='sci-subtitle'>Precision Biomechanical Modeling for Clinical Decision Support</p>", unsafe_allow_html=True)
 
@@ -99,10 +137,26 @@ if model:
         input_data = pd.DataFrame([[hfa, haa, kfa, itr, kva, adf, fpa, tfa, hq]], columns=feature_names)
         prediction = float(model.predict(input_data.values)[0])
 
-        # 修改后的结果卡片布局
+        # ── 输入范围检查 ──────────────────────────────────────────
+        range_warnings = check_input_ranges(input_data)
+        if range_warnings:
+            st.warning(
+                "⚠️ **Out-of-range input detected.** The following features exceed the training data distribution. "
+                "Predictions may be unreliable:\n\n" + "\n\n".join(f"- {w}" for w in range_warnings)
+            )
+
+        # ── 预测区间（50模型集成）────────────────────────────────
+        ens_mean, ci_lo, ci_hi = get_ensemble_prediction(input_data.values)
+
+        # ── 结果卡片 ─────────────────────────────────────────────
         status_color = '#C0392B' if prediction > 0.6 else '#27AE60'
         status_label = 'HIGH LOAD' if prediction > 0.6 else 'NORMAL'
-        
+
+        if ens_mean is not None:
+            ci_str = f"95% Prediction Interval: [{ci_lo:.4f}, {ci_hi:.4f}] &nbsp;|&nbsp; Ensemble mean: {ens_mean:.4f}"
+        else:
+            ci_str = "95% Prediction Interval: not available (ensemble models not loaded) &nbsp;|&nbsp; Biomechanical Baseline: 0.285"
+
         st.markdown(f"""
             <div class="result-card">
                 <div class="label-text">Predicted Stress Index</div>
@@ -113,13 +167,24 @@ if model:
                     </span>
                 </div>
                 <div style="font-size: 0.85rem; color: #7F8C8D; margin-top: 10px;">
-                    Confidence Interval: 95% (±0.024) | Biomechanical Baseline: 0.285
+                    {ci_str}
                 </div>
             </div>
         """, unsafe_allow_html=True)
-        
+
+        if range_warnings:
+            st.markdown(
+                "<div style='font-size:0.8rem; color:#E67E22; margin-top:8px;'>"
+                "⚠️ This tool is a research prototype trained on 189 male amateur athletes. "
+                "Results should not be used as a standalone clinical decision."
+                "</div>",
+                unsafe_allow_html=True
+            )
+
         with st.expander("ℹ️ Model Metrics"):
             st.caption("Algorithm: XGBoost | Validation RMSE: 0.042")
+            if ens_mean is not None:
+                st.caption(f"Ensemble size: {len(ensemble_models)} models | 95% PI based on repeated random splits")
         
         csv = input_data.to_csv(index=False).encode('utf-8')
         st.download_button("📥 Export Report", data=csv, file_name='acl_report.csv', use_container_width=True)
