@@ -172,23 +172,6 @@ if model:
             </div>
         """, unsafe_allow_html=True)
 
-        if range_warnings:
-            st.markdown(
-                "<div style='font-size:0.8rem; color:#E67E22; margin-top:8px;'>"
-                "⚠️ This tool is a research prototype trained on 189 male amateur athletes. "
-                "Results should not be used as a standalone clinical decision."
-                "</div>",
-                unsafe_allow_html=True
-            )
-
-        with st.expander("ℹ️ Model Metrics"):
-            st.caption("Algorithm: XGBoost | Validation RMSE: 0.042")
-            if ens_mean is not None:
-                st.caption(f"Ensemble size: {len(ensemble_models)} models | 95% PI based on repeated random splits")
-        
-        csv = input_data.to_csv(index=False).encode('utf-8')
-        st.download_button("📥 Export Report", data=csv, file_name='acl_report.csv', use_container_width=True)
-
     with col_right:
         st.markdown("### 🔍 Model Interpretation")
         shap_values = explainer(input_data)
