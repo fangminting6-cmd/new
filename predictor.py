@@ -29,7 +29,7 @@ def load_assets():
         ensemble_models = []
         import os
         for seed in range(50):
-            path = f'models/model_seed{seed}.pkl'
+            path = f'models/XGB_seed{seed}.pkl'
             if os.path.exists(path):
                 ensemble_models.append(joblib.load(path))
         return model, explainer, features, ensemble_models
