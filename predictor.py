@@ -29,7 +29,7 @@ def load_assets():
         ensemble_models = []
         import os
         for seed in range(50):
-            path = f'models/XGB_seed{seed}.pkl'
+            path = f'XGB_seed{seed}.pkl'
             if os.path.exists(path):
                 ensemble_models.append(joblib.load(path))
         return model, explainer, features, ensemble_models
@@ -188,5 +188,3 @@ if model:
         plt.grid(False)
         st.pyplot(plt.gcf(), clear_figure=True)
         st.caption("Fig 1. SHAP analysis quantifying feature impact on ACL stress.")
-
-st.markdown("<br><hr><div style='color: #95A5A6; font-size: 0.8rem; font-family: Times New Roman;'>Reference: Zhang et al. (2026). DOI: 10.1016/j.jsams.2026.04.01</div>", unsafe_allow_html=True)
