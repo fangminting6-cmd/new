@@ -166,7 +166,7 @@ if model:
                         {status_label}
                     </span>
                 </div>
-                <div style="font-size: 0.85rem; color: #7F8C8D; margin-top: 10px;">
+                <div style="font-size: 1.05rem; color: #7F8C8D; margin-top: 10px;">
                     {ci_str}
                 </div>
             </div>
