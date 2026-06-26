@@ -133,7 +133,7 @@ if model:
             fpa = st.number_input("Foot Prog. (FPA)", value=12.00)
             tfa = st.number_input("Trunk Flexion (TFA)", value=24.00)
         
-        hq = st.slider("Hamstring/Quadriceps Ratio (H/Q)", 0.1, 1.5, 0.31)
+        hq = st.slider("Hamstring/Quadriceps Ratio (H/Q)", 0.1, 1.5, 0.35)
         input_data = pd.DataFrame([[hfa, haa, kfa, itr, kva, adf, fpa, tfa, hq]], columns=feature_names)
         prediction = float(model.predict(input_data.values)[0])
 
